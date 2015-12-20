@@ -22,12 +22,10 @@ public class MyLandmark {
 
     private int type;
 
-    private float offsetX = 13; //*3;
-    private float offsetY = 15; //*3;
+    private float offsetX = 13 *3;
+    private float offsetY = 15 *3;
 
-    public MyLandmark(Bitmap fullImage, Canvas canvas, Face face, Landmark landmark, double scale) {
-
-        Log.d("MyLandmark", "scale: " +scale);
+    public MyLandmark(Bitmap fullImage, Face face, Landmark landmark) {
 
         type = landmark.getType();
         position = new PointF();
@@ -36,16 +34,16 @@ public class MyLandmark {
         offsetY = (offsetY * face.getHeight()) / fullImage.getHeight();
 
         if(landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE) {
-            position.x = (float) (landmark.getPosition().x - (offsetX * scale));
-            position.y = (float) (landmark.getPosition().y - (offsetY * scale));
+            position.x = landmark.getPosition().x - (offsetX);
+            position.y = landmark.getPosition().y - (offsetY);
 
             if(position.x < 0)
                 position.x = 0;
             if(position.y < 0)
                 position.y = 0;
 
-            width = (float) (offsetX * scale * 2);
-            height = (float) (offsetY * scale * 2);
+            width = offsetX * 2;
+            height = offsetY * 2;
         }
 
         if(width <= 0 || height <= 0)

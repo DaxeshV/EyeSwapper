@@ -19,6 +19,7 @@ import com.anthonycr.grant.PermissionsResultAction;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private View spinner;
     private FaceOverlayView mFaceOverlayView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        spinner = findViewById(R.id.progress_bar);
 
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(this,
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
@@ -53,13 +57,29 @@ public class MainActivity extends AppCompatActivity {
         mFaceOverlayView = (FaceOverlayView) findViewById( R.id.face_overlay );
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        EventBus.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        EventBus.getInstance().unregister(this);
+    }
+
+
     public void takePic(View view) {
         dispatchTakePictureIntent();
+
+        spinner.setVisibility(View.VISIBLE);
     }
 
     public void loadBitmap(View view) {
 
-        final View spinner = findViewById(R.id.progress_bar);
         spinner.setVisibility(View.VISIBLE);
 
         new AsyncTask() {
@@ -74,12 +94,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Object parm) {
-
-                spinner.setVisibility(View.GONE);
-
                 mFaceOverlayView.setBitmap((Bitmap) parm);
             }
         }.execute(spinner);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void onImageReady(ImageReadyEvent e) {
+        spinner.setVisibility(View.GONE);
     }
 
     String mCurrentPhotoPath;

@@ -52,24 +52,16 @@ public class FaceOverlayView extends View {
 
     }
 
+    public void setFaces(SparseArray<Face> faces) {
+        mFaces = faces;
+    }
+
     public void setBitmap( Bitmap bitmap ) {
+        new WorkerTask(this, bitmap).execute();
+    }
 
-        FaceDetector detector = new FaceDetector.Builder( getContext() )
-                .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setMode(FaceDetector.FAST_MODE)
-                .build();
-
-        mBitmap = bitmap.copy(bitmap.getConfig(), true);
-
-        if (!detector.isOperational()) {
-
-        } else {
-            Frame frame = new Frame.Builder().setBitmap(mBitmap).build();
-            mFaces = detector.detect(frame);
-            detector.release();
-        }
-        invalidate();
+    protected void setSwappedBitmap(Bitmap bitmap) {
+        mBitmap = bitmap;
     }
 
     @Override
@@ -90,77 +82,9 @@ public class FaceOverlayView extends View {
         double imageHeight = mBitmap.getHeight();
         double scale = Math.min(viewWidth / imageWidth, viewHeight / imageHeight);
 
-
-        MyFace[] faces = getFaces(canvas, scale);
-
-        // debug
-//        paintRed(faces);
-
-        drawFaces(faces);
-
         Rect destBounds = new Rect( 0, 0, (int) ( imageWidth * scale ), (int) ( imageHeight * scale ) );
         canvas.drawBitmap(mBitmap, null, destBounds, null);
         return scale;
-    }
-
-    private MyFace[] getFaces(Canvas canvas, double scale) {
-
-        if(mFaces.size() <= 0)
-            return null;
-
-        MyFace[] faces = new MyFace[mFaces.size()];
-
-        for(int i=0; i<mFaces.size(); i++) {
-            Face face = mFaces.get(i);
-            if(face == null)
-                continue;
-
-            faces[i] = new MyFace(mBitmap, canvas, face, face.getLandmarks(), scale);
-        }
-
-        return faces;
-    }
-
-    private void drawFaces(MyFace[] faces) {
-
-        if(faces == null || faces.length <= 0 || faces[0] == null)
-            return;
-
-        for (int i=0; i<faces.length-1; i++){
-
-            MyFace face1 = faces[i];
-            MyFace face2 = faces[i+1];
-
-            for(MyLandmark landmark1 : face1.getLandmarks()) {
-                MyLandmark landmark2 = face2.getLandmark(landmark1.getType());
-
-                if(landmark2 == null)
-                    continue;
-
-                Log.d("landmanrk1", "width = " +landmark1.getWidth() +", height = " +landmark1.getHeight());
-                Log.d("landmanrk2", "width = " +landmark2.getWidth() +", height = " +landmark2.getHeight());
-
-                Bitmap landmarkBitmap1 = Bitmap.createScaledBitmap(landmark1.getImage(), (int) landmark2.getWidth(), (int) landmark2.getHeight(), false);
-                Bitmap landmarkBitmap2 = Bitmap.createScaledBitmap(landmark2.getImage(), (int) landmark1.getWidth(), (int) landmark1.getHeight(), false);
-
-                // 1st face
-                for(float y = landmark1.getPosition().y; y < landmark1.getPosition().y + landmark1.getHeight(); y++)
-                    for(float x = landmark1.getPosition().x; x < landmark1.getPosition().x + landmark1.getWidth(); x++) {
-                        if(((int) (x - landmark1.getPosition().x)) < landmarkBitmap2.getWidth() && ((int) (y - landmark1.getPosition().y)) < landmarkBitmap2.getHeight())
-                            mBitmap.setPixel( (int) x, (int) y,  landmarkBitmap2.getPixel(((int) (x - landmark1.getPosition().x)), ((int) (y - landmark1.getPosition().y))));
-                    }
-
-                // 2nd face
-                for(float y = landmark2.getPosition().y; y < landmark2.getPosition().y + landmark2.getHeight(); y++)
-                    for(float x = landmark2.getPosition().x; x < landmark2.getPosition().x + landmark2.getWidth(); x++) {
-                        if(((int) (x - landmark2.getPosition().x)) < landmarkBitmap1.getWidth() && ((int) (y - landmark2.getPosition().y)) < landmarkBitmap1.getHeight())
-                            mBitmap.setPixel( (int) x, (int) y,  landmarkBitmap1.getPixel(((int) (x - landmark2.getPosition().x)), ((int) (y - landmark2.getPosition().y))));
-                    }
-
-            }
-
-            i++;
-        }
     }
 
     private void drawFaceBox(Canvas canvas, double scale) {
@@ -193,29 +117,9 @@ public class FaceOverlayView extends View {
             for ( Landmark landmark : face.getLandmarks() ) {
                 int cx = (int) ( landmark.getPosition().x * scale );
                 int cy = (int) ( landmark.getPosition().y * scale );
-                canvas.drawCircle( cx, cy, (float) (20*scale), paint );
+                canvas.drawCircle( cx, cy, (float) scale, paint );
             }
 
-        }
-    }
-
-    // debug method
-    private void paintRed(MyFace[] faces) {
-        if(faces != null && faces.length > 0) {
-            for (int i = 0; i < faces.length; i++) {
-                MyFace face = faces[i];
-                if(face != null) {
-                    for (MyLandmark landmark : face.getLandmarks()) {
-                        if(landmark != null) {
-                            for (float y = landmark.getPosition().y; y < landmark.getPosition().y + landmark.getHeight(); y++)
-                                for (float x = landmark.getPosition().x; x < landmark.getPosition().x + landmark.getWidth(); x++) {
-                                    if (x < mBitmap.getWidth() && y < mBitmap.getHeight())
-                                        mBitmap.setPixel((int) x, (int) y, Color.RED);
-                                }
-                        }
-                    }
-                }
-            }
         }
     }
 }
