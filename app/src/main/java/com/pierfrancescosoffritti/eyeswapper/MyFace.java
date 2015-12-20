@@ -1,6 +1,7 @@
 package com.pierfrancescosoffritti.eyeswapper;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -24,22 +25,13 @@ public class MyFace {
 
     private List<MyLandmark> landmarks;
 
-    public MyFace(PointF position, float width, float height, Bitmap image) {
-        this.position = position;
-        this.width = width;
-        this.height = height;
-        this.image = image;
-
-        landmarks = new ArrayList<>();
-    }
-
-    public MyFace(Bitmap fullImage, Face face, List<Landmark> landmarkList, double scale) {
+    public MyFace(Bitmap fullImage, Canvas canvas, Face face, List<Landmark> landmarkList, double scale) {
 
         landmarks = new ArrayList<>();
 
         for(Landmark landmark : landmarkList) {
             if(landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE)
-                landmarks.add(new MyLandmark(fullImage, face, landmark, scale));
+                landmarks.add(new MyLandmark(fullImage, canvas, face, landmark, scale));
         }
 
         Log.d("face ", "landmarks: " +landmarks.size());

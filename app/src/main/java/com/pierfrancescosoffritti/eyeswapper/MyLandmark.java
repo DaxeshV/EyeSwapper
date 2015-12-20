@@ -1,6 +1,7 @@
 package com.pierfrancescosoffritti.eyeswapper;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -21,18 +22,10 @@ public class MyLandmark {
 
     private int type;
 
-    private float offsetX = 13;
-    private float offsetY = 15;
+    private float offsetX = 13; //*3;
+    private float offsetY = 15; //*3;
 
-    public MyLandmark(PointF position, float width, float height, Bitmap image, int type) {
-        this.position = position;
-        this.width = width;
-        this.height = height;
-        this.image = image;
-        this.type = type;
-    }
-
-    public MyLandmark(Bitmap fullImage, Face face, Landmark landmark, double scale) {
+    public MyLandmark(Bitmap fullImage, Canvas canvas, Face face, Landmark landmark, double scale) {
 
         Log.d("MyLandmark", "scale: " +scale);
 

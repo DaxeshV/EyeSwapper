@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDenied(String permission) {
                         Toast.makeText(MainActivity.this,
-                                "Sorry, we need the Storage Permission to do that",
+                                "Sorry, we need the Storage and Camera Permission",
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -85,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
 
     private File createImageFile() throws IOException {
-        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "capture_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
@@ -96,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
