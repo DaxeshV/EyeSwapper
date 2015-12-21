@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
@@ -31,13 +31,48 @@
         android:layout_alignWithParentIfMissing="false" />
 
     <Button
+        android:id="@+id/load_bitmap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="load bitmap"
+        android:text="load"
         android:onClick="loadBitmap"
 
         android:layout_toRightOf="@+id/take_pic"
         android:layout_alignParentBottom="true" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/offset_x_til"
+        app:layout_widthPercent ="20%"
+        android:layout_height="wrap_content"
+
+        android:layout_toRightOf="@id/load_bitmap"
+        android:layout_alignParentBottom="true" >
+
+        <EditText
+            android:id="@+id/offset_x_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:hint="offset x"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/offset_y_til"
+        app:layout_widthPercent ="20%"
+        android:layout_height="wrap_content"
+
+        android:layout_toRightOf="@id/offset_x_til"
+        android:layout_alignParentBottom="true" >
+
+        <EditText
+            android:id="@+id/offset_y_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:hint="offset y"
+            />
+    </android.support.design.widget.TextInputLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -49,4 +84,4 @@
         android:visibility="gone" >
     </ProgressBar>
 
-</RelativeLayout>
+</android.support.percent.PercentRelativeLayout>

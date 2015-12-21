@@ -25,6 +25,7 @@ public class FaceOverlayView extends View {
     private SparseArray<Face> mFaces;
 
     private Paint paint;
+    private float[] offsets = {13, 15};
 
     public FaceOverlayView(Context context) {
         this(context, null);
@@ -121,5 +122,17 @@ public class FaceOverlayView extends View {
             }
 
         }
+    }
+
+    public void setOffsetX(float offsetX) {
+        this.offsets[0] = offsetX;
+    }
+
+    public void setOffsetY(float offsetY) {
+        this.offsets[1] = offsetY;
+    }
+
+    public float[] getOffsets() {
+        return offsets;
     }
 }

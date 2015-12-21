@@ -82,7 +82,7 @@ public class WorkerTask extends AsyncTask {
             if(face == null)
                 continue;
 
-            faces[i] = new MyFace(mBitmap, face, face.getLandmarks());
+            faces[i] = new MyFace(mBitmap, face, face.getLandmarks(), mView.getOffsets());
         }
 
         return faces;

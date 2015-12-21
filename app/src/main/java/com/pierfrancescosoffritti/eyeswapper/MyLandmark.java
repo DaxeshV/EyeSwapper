@@ -25,7 +25,12 @@ public class MyLandmark {
     private float offsetX = 13 *3;
     private float offsetY = 15 *3;
 
-    public MyLandmark(Bitmap fullImage, Face face, Landmark landmark) {
+    public MyLandmark(Bitmap fullImage, Face face, Landmark landmark, float ... offset ) {
+
+        if(offset.length == 2) {
+            offsetX = offset[0] *3;
+            offsetY = offset[1] *3;
+        }
 
         type = landmark.getType();
         position = new PointF();

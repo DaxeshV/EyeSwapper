@@ -25,13 +25,13 @@ public class MyFace {
 
     private List<MyLandmark> landmarks;
 
-    public MyFace(Bitmap fullImage, Face face, List<Landmark> landmarkList) {
+    public MyFace(Bitmap fullImage, Face face, List<Landmark> landmarkList, float ... offset) {
 
         landmarks = new ArrayList<>();
 
         for(Landmark landmark : landmarkList) {
             if(landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE)
-                landmarks.add(new MyLandmark(fullImage, face, landmark));
+                landmarks.add(new MyLandmark(fullImage, face, landmark, offset));
         }
 
         Log.d("face ", "landmarks: " +landmarks.size());

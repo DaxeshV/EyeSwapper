@@ -3,9 +3,7 @@ package com.pierfrancescosoffritti.eyeswapper;
 import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -23,21 +21,23 @@ import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnTextChanged;
 
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    private View spinner;
-    private FaceOverlayView mFaceOverlayView;
+    @Bind(R.id.progress_bar) View spinner;
+    @Bind(R.id.face_overlay) FaceOverlayView mFaceOverlayView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        spinner = findViewById(R.id.progress_bar);
+        ButterKnife.bind(this);
 
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(this,
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        mFaceOverlayView = (FaceOverlayView) findViewById( R.id.face_overlay );
     }
 
     @Override
@@ -82,21 +80,39 @@ public class MainActivity extends AppCompatActivity {
 
         spinner.setVisibility(View.VISIBLE);
 
-        new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
+        Glide.with(getApplicationContext())
+                .load(R.raw.face)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(200, 200) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                        mFaceOverlayView.setBitmap(resource);
+                    }
+                });
+    }
 
-                InputStream stream = getResources().openRawResource(R.raw.face);
-                Bitmap bitmap = BitmapFactory.decodeStream(stream);
+    @OnTextChanged(R.id.offset_x_et)
+    void onOffsetXChanged(CharSequence text) {
+        try {
+            mFaceOverlayView.setOffsetX(Long.parseLong(text.toString()));
+            Log.d("MainActivity", "offsetX: " + text.toString());
+        } catch (NumberFormatException e) {
+            Toast.makeText(MainActivity.this,
+                    "Please, write only numbers :\\",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
-                return bitmap;
-            }
-
-            @Override
-            protected void onPostExecute(Object parm) {
-                mFaceOverlayView.setBitmap((Bitmap) parm);
-            }
-        }.execute(spinner);
+    @OnTextChanged(R.id.offset_y_et)
+    void onOffsetYChanged(CharSequence text) {
+        try {
+            mFaceOverlayView.setOffsetY(Long.parseLong(text.toString()));
+            Log.d("MainActivity", "offsetY: " + text.toString());
+        } catch (NumberFormatException e) {
+            Toast.makeText(MainActivity.this,
+                    "Please, write only numbers :\\",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @SuppressWarnings("unused")
@@ -154,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
                             mFaceOverlayView.setBitmap(resource);
-                            Log.d("mainActivity", "done");
                         }
                     });
         }
