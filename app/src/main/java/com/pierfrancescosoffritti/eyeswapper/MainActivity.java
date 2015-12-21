@@ -26,6 +26,7 @@ import java.io.IOException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import butterknife.OnTextChanged;
 
 public class MainActivity extends AppCompatActivity {
@@ -91,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(
                 Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
+    }
+
+    @SuppressWarnings("unused")
+    @OnLongClick(R.id.load_bitmap)
+    public boolean refreshBitmap(View view) {
+
+        spinner.setVisibility(View.VISIBLE);
+
+        loadPic();
+
+        return true;
     }
 
     @SuppressWarnings("unused")
@@ -161,15 +173,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 
-            Glide.with(getApplicationContext())
-                    .load(mCurrentPhotoPath)
-                    .asBitmap()
-                    .into(new SimpleTarget<Bitmap>(200,200) {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                            mFaceOverlayView.setBitmap(resource);
-                        }
-                    });
+            loadPic();
         }
 
         else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
@@ -181,11 +185,19 @@ public class MainActivity extends AppCompatActivity {
             cursor.moveToFirst();
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
+            mCurrentPhotoPath = cursor.getString(columnIndex);
             cursor.close();
 
-            Glide.with(getApplicationContext())
-                .load(picturePath)
+            loadPic();
+        }
+
+        else
+            spinner.setVisibility(View.GONE);
+    }
+
+    private void loadPic() {
+        Glide.with(getApplicationContext())
+                .load(mCurrentPhotoPath)
                 .asBitmap()
                 .into(new SimpleTarget<Bitmap>(200, 200) {
                     @Override
@@ -193,9 +205,5 @@ public class MainActivity extends AppCompatActivity {
                         mFaceOverlayView.setBitmap(resource);
                     }
                 });
-        }
-
-        else
-            spinner.setVisibility(View.GONE);
     }
 }
