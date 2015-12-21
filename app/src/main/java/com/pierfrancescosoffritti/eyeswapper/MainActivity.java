@@ -97,9 +97,8 @@ public class MainActivity extends AppCompatActivity {
             mFaceOverlayView.setOffsetX(Long.parseLong(text.toString()));
             Log.d("MainActivity", "offsetX: " + text.toString());
         } catch (NumberFormatException e) {
-            Toast.makeText(MainActivity.this,
-                    "Please, write only numbers :\\",
-                    Toast.LENGTH_SHORT).show();
+            if(!text.toString().isEmpty())
+                Toast.makeText(MainActivity.this, "Please, write only numbers :\\", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -109,9 +108,8 @@ public class MainActivity extends AppCompatActivity {
             mFaceOverlayView.setOffsetY(Long.parseLong(text.toString()));
             Log.d("MainActivity", "offsetY: " + text.toString());
         } catch (NumberFormatException e) {
-            Toast.makeText(MainActivity.this,
-                    "Please, write only numbers :\\",
-                    Toast.LENGTH_SHORT).show();
+            if(!text.toString().isEmpty())
+                Toast.makeText(MainActivity.this, "Please, write only numbers :\\", Toast.LENGTH_SHORT).show();
         }
     }
 
