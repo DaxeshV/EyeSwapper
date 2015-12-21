@@ -2,6 +2,7 @@ package com.pierfrancescosoffritti.eyeswapper;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import butterknife.OnTextChanged;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int RESULT_LOAD_IMAGE = 2;
 
     private String mCurrentPhotoPath;
 
@@ -86,15 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
         spinner.setVisibility(View.VISIBLE);
 
-        Glide.with(getApplicationContext())
-                .load(R.raw.face)
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>(200, 200) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                        mFaceOverlayView.setBitmap(resource);
-                    }
-                });
+        Intent i = new Intent(
+                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
 
     @SuppressWarnings("unused")
@@ -174,6 +170,29 @@ public class MainActivity extends AppCompatActivity {
                             mFaceOverlayView.setBitmap(resource);
                         }
                     });
+        }
+
+        else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Glide.with(getApplicationContext())
+                .load(picturePath)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(200, 200) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                        mFaceOverlayView.setBitmap(resource);
+                    }
+                });
         }
 
         else
