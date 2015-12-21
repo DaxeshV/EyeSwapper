@@ -1,5 +1,4 @@
 # EyeSwapper
-playing around with Vision API
 
 download apk [here!](https://rawgit.com/PierfrancescoSoffritti/EyeSwapper/master/EyeSwapper.apk)
 
