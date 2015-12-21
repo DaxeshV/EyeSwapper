@@ -7,11 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 
-import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.face.Landmark;
@@ -20,6 +18,8 @@ import com.google.android.gms.vision.face.Landmark;
  * Created by  Pierfrancesco on 19/12/2015.
  */
 public class FaceOverlayView extends View {
+
+    private FaceDetector mFaceDetector;
 
     private Bitmap mBitmap;
     private SparseArray<Face> mFaces;
@@ -51,6 +51,11 @@ public class FaceOverlayView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
 
+        mFaceDetector = new FaceDetector.Builder( getContext() )
+                .setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .setMode(FaceDetector.ACCURATE_MODE)
+                .build();
     }
 
     public void setFaces(SparseArray<Face> faces) {
@@ -58,7 +63,7 @@ public class FaceOverlayView extends View {
     }
 
     public void setBitmap( Bitmap bitmap ) {
-        new WorkerTask(this, bitmap).execute();
+        new WorkerTask(this, bitmap, mFaceDetector).execute();
     }
 
     protected void setSwappedBitmap(Bitmap bitmap) {
@@ -102,23 +107,18 @@ public class FaceOverlayView extends View {
             right = (float) scale * ( face.getPosition().x + face.getWidth() );
             bottom = (float) scale * ( face.getPosition().y + face.getHeight() );
 
-            canvas.drawRect( left, top, right, bottom, paint );
+            canvas.drawRect( left, top, right, bottom, paint);
         }
     }
 
     private void drawFaceLandmarks( Canvas canvas, double scale ) {
-        Paint paint = new Paint();
-        paint.setColor( Color.GREEN );
-        paint.setStyle( Paint.Style.STROKE );
-        paint.setStrokeWidth( 5 );
-
         for( int i = 0; i < mFaces.size(); i++ ) {
             Face face = mFaces.valueAt(i);
 
             for ( Landmark landmark : face.getLandmarks() ) {
                 int cx = (int) ( landmark.getPosition().x * scale );
                 int cy = (int) ( landmark.getPosition().y * scale );
-                canvas.drawCircle( cx, cy, (float) scale, paint );
+                canvas.drawCircle( cx, cy, (float) scale, paint);
             }
 
         }

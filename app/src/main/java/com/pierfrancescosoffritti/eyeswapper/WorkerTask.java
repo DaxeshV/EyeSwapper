@@ -17,33 +17,29 @@ public class WorkerTask extends AsyncTask {
 
     private FaceOverlayView mView;
     private Bitmap mBitmap;
-    private Context mContext;
+
+    FaceDetector mFaceDetector;
 
     private SparseArray<Face> mFaces;
 
-    public WorkerTask(FaceOverlayView view, Bitmap bitmap) {
+    public WorkerTask(FaceOverlayView view, Bitmap bitmap, FaceDetector detector) {
         mView = view;
         mBitmap = bitmap;
 
-        mContext = view.getContext();
+        mFaceDetector = detector;
     }
 
     @Override
     protected Object doInBackground(Object[] params) {
-        FaceDetector detector = new FaceDetector.Builder( mContext )
-                .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setMode(FaceDetector.FAST_MODE)
-                .build();
 
         mBitmap = mBitmap.copy(mBitmap.getConfig(), true);
 
-        if (!detector.isOperational()) {
+        if (!mFaceDetector.isOperational()) {
 
         } else {
             Frame frame = new Frame.Builder().setBitmap(mBitmap).build();
-            mFaces = detector.detect(frame);
-            detector.release();
+            mFaces = mFaceDetector.detect(frame);
+//            mFaceDetector.release();
 
             modifyBitmap();
         }
@@ -79,16 +75,23 @@ public class WorkerTask extends AsyncTask {
 
         for(int i=0; i<mFaces.size(); i++) {
             Face face = mFaces.get(i);
-            if(face == null)
+            if(face == null) {
+                Log.d("WorkerTask", "face == null");
                 continue;
+            }
 
             faces[i] = new MyFace(mBitmap, face, face.getLandmarks(), mView.getOffsets());
         }
 
+        Log.d("WorkerTask", faces.length +" faces detected");
         return faces;
     }
 
     private void drawFaces(MyFace[] faces) {
+
+        System.out.println("" + (faces[0] == null));
+        System.out.println("" + (faces == null));
+        System.out.println("" + (faces.length <= 0));
 
         if(faces == null || faces.length <= 0 || faces[0] == null)
             return;
@@ -104,8 +107,8 @@ public class WorkerTask extends AsyncTask {
                 if(landmark2 == null)
                     continue;
 
-                Log.d("landmanrk1", "width = " + landmark1.getWidth() + ", height = " + landmark1.getHeight());
-                Log.d("landmanrk2", "width = " +landmark2.getWidth() +", height = " +landmark2.getHeight());
+//                Log.d("landmanrk1", "width = " + landmark1.getWidth() + ", height = " + landmark1.getHeight());
+//                Log.d("landmanrk2", "width = " +landmark2.getWidth() +", height = " +landmark2.getHeight());
 
                 Bitmap landmarkBitmap1 = Bitmap.createScaledBitmap(landmark1.getImage(), (int) landmark2.getWidth(), (int) landmark2.getHeight(), false);
                 Bitmap landmarkBitmap2 = Bitmap.createScaledBitmap(landmark2.getImage(), (int) landmark1.getWidth(), (int) landmark1.getHeight(), false);
