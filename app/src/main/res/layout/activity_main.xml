@@ -25,7 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="take pic"
-        android:onClick="takePic"
 
         android:layout_alignParentBottom="true"
         android:layout_alignWithParentIfMissing="false" />
@@ -35,7 +34,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="load"
-        android:onClick="loadBitmap"
 
         android:layout_toRightOf="@+id/take_pic"
         android:layout_alignParentBottom="true" />

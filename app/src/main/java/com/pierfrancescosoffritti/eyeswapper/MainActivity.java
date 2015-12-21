@@ -24,11 +24,14 @@ import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_TAKE_PHOTO = 1;
+
+    private String mCurrentPhotoPath;
 
     @Bind(R.id.progress_bar) View spinner;
     @Bind(R.id.face_overlay) FaceOverlayView mFaceOverlayView;
@@ -69,13 +72,16 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getInstance().unregister(this);
     }
 
-
+    @SuppressWarnings("unused")
+    @OnClick(R.id.take_pic)
     public void takePic(View view) {
         dispatchTakePictureIntent();
 
         spinner.setVisibility(View.VISIBLE);
     }
 
+    @SuppressWarnings("unused")
+    @OnClick(R.id.load_bitmap)
     public void loadBitmap(View view) {
 
         spinner.setVisibility(View.VISIBLE);
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @SuppressWarnings("unused")
     @OnTextChanged(R.id.offset_x_et)
     void onOffsetXChanged(CharSequence text) {
         try {
@@ -102,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     @OnTextChanged(R.id.offset_y_et)
     void onOffsetYChanged(CharSequence text) {
         try {
@@ -119,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
         spinner.setVisibility(View.GONE);
     }
 
-    String mCurrentPhotoPath;
-
     private File createImageFile() throws IOException {
         String imageFileName = "capture_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
@@ -134,8 +140,6 @@ public class MainActivity extends AppCompatActivity {
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
-
-    static final int REQUEST_TAKE_PHOTO = 1;
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -159,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 
             Glide.with(getApplicationContext())
                     .load(mCurrentPhotoPath)
@@ -171,5 +175,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }
+
+        else
+            spinner.setVisibility(View.GONE);
     }
 }

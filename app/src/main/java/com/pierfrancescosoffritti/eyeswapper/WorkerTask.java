@@ -1,6 +1,5 @@
 package com.pierfrancescosoffritti.eyeswapper;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -88,10 +87,6 @@ public class WorkerTask extends AsyncTask {
     }
 
     private void drawFaces(MyFace[] faces) {
-
-        System.out.println("" + (faces[0] == null));
-        System.out.println("" + (faces == null));
-        System.out.println("" + (faces.length <= 0));
 
         if(faces == null || faces.length <= 0 || faces[0] == null)
             return;
