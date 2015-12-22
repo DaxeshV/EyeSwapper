@@ -2,40 +2,70 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
 
-    tools:context="com.pierfrancescosoffritti.eyeswapper.MainActivity"
-    android:gravity="center">
+    android:background="@color/colorPrimary"
 
-    <com.pierfrancescosoffritti.eyeswapper.FaceOverlayView
-        android:id="@+id/face_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    tools:context="com.pierfrancescosoffritti.eyeswapper.MainActivity" >
 
-        android:layout_above="@+id/take_pic"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" />
-
-    <Button
-        android:id="@+id/take_pic"
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="take pic"
-
         android:layout_alignParentBottom="true"
-        android:layout_alignWithParentIfMissing="false" />
+        android:layout_alignParentRight="true"
+        android:layout_margin="8dp"
+        fab:menu_fab_size="normal"
+        fab:menu_showShadow="true"
+        fab:menu_shadowColor="#40000000"
+        fab:menu_shadowRadius="2dp"
+        fab:menu_shadowXOffset="0dp"
+        fab:menu_shadowYOffset="1dp"
+        fab:menu_colorNormal="#DA4336"
+        fab:menu_colorPressed="#E75043"
+        fab:menu_colorRipple="#99FFFFFF"
+        fab:menu_animationDelayPerItem="50"
+        fab:menu_icon="@drawable/fab_add"
+        fab:menu_buttonSpacing="0dp"
+        fab:menu_labels_margin="0dp"
+        fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+        fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+        fab:menu_labels_textColor="#FFFFFF"
+        fab:menu_labels_textSize="14sp"
+        fab:menu_labels_cornerRadius="3dp"
+        fab:menu_labels_colorNormal="#333333"
+        fab:menu_labels_colorPressed="#444444"
+        fab:menu_labels_colorRipple="#66FFFFFF"
+        fab:menu_labels_showShadow="true"
+        fab:menu_labels_singleLine="false"
+        fab:menu_labels_ellipsize="none"
+        fab:menu_labels_maxLines="-1"
+        fab:menu_labels_position="left"
+        fab:menu_openDirection="up"
+        fab:menu_backgroundColor="@android:color/transparent" >
 
-    <Button
-        android:id="@+id/load_bitmap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="load"
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_load_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_image_24dp"
+            android:padding="8dp"
+            fab:fab_size="mini"
+            fab:fab_label="Load image" />
 
-        android:layout_toRightOf="@+id/take_pic"
-        android:layout_alignParentBottom="true" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_take_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_camera_alt_24dp"
+            android:padding="8dp"
+            fab:fab_size="mini"
+            fab:fab_label="Take picture" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
 
 </RelativeLayout>

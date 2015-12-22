@@ -2,7 +2,6 @@ package com.pierfrancescosoffritti.eyeswapper;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Frame;
@@ -43,7 +42,8 @@ public class WorkerTask extends AsyncTask {
             mFaces = mFaceDetector.detect(frame);
 //            mFaceDetector.release();
 
-            modifyBitmap();
+            if(mFaces.size() > 1);
+                modifyBitmap();
         }
 
         return null;
@@ -56,7 +56,7 @@ public class WorkerTask extends AsyncTask {
 
         mView.invalidate();
 
-        EventBus.getInstance().post(new ImageReadyEvent(maxOffsetX, maxOffsetY));
+        EventBus.getInstance().post(new ImageReadyEvent(mFaces.size() > 1 ? maxOffsetX : 0, mFaces.size() > 1 ? maxOffsetY : 0));
     }
 
     private void modifyBitmap() {
@@ -78,14 +78,12 @@ public class WorkerTask extends AsyncTask {
         for(int i=0; i<mFaces.size(); i++) {
             Face face = mFaces.get(i);
             if(face == null) {
-                Log.d("WorkerTask", "face == null");
                 continue;
             }
 
             faces[i] = new MyFace(mBitmap, face, face.getLandmarks(), mView.getOffsets());
         }
 
-        Log.d("WorkerTask", faces.length +" faces detected");
         return faces;
     }
 
@@ -104,9 +102,6 @@ public class WorkerTask extends AsyncTask {
 
                 if(landmark2 == null)
                     continue;
-
-//                Log.d("landmanrk1", "width = " + landmark1.getWidth() + ", height = " + landmark1.getHeight());
-//                Log.d("landmanrk2", "width = " +landmark2.getWidth() +", height = " +landmark2.getHeight());
 
                 Bitmap landmarkBitmap1 = Bitmap.createScaledBitmap(landmark1.getImage(), (int) landmark2.getWidth(), (int) landmark2.getHeight(), false);
                 Bitmap landmarkBitmap2 = Bitmap.createScaledBitmap(landmark2.getImage(), (int) landmark1.getWidth(), (int) landmark1.getHeight(), false);

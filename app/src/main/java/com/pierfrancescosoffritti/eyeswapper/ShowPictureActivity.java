@@ -129,11 +129,8 @@ public class ShowPictureActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MainActivity.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-
+        if (requestCode == MainActivity.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK)
             loadPic();
-        }
-
         else if (requestCode == MainActivity.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -149,7 +146,7 @@ public class ShowPictureActivity extends AppCompatActivity {
         }
 
         else
-            spinner.setVisibility(View.GONE);
+            this.finish();
     }
 
     private void loadPic() {
