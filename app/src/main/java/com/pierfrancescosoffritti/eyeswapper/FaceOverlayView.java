@@ -19,8 +19,6 @@ import com.google.android.gms.vision.face.Landmark;
  */
 public class FaceOverlayView extends View {
 
-    private FaceDetector mFaceDetector;
-
     private Bitmap mBitmap;
     private SparseArray<Face> mFaces;
 
@@ -50,12 +48,6 @@ public class FaceOverlayView extends View {
         paint.setColor(Color.GREEN);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
-
-        mFaceDetector = new FaceDetector.Builder( getContext() )
-                .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setMode(FaceDetector.ACCURATE_MODE)
-                .build();
     }
 
     public void setFaces(SparseArray<Face> faces) {
@@ -63,7 +55,7 @@ public class FaceOverlayView extends View {
     }
 
     public void setBitmap( Bitmap bitmap ) {
-        new WorkerTask(this, bitmap, mFaceDetector).execute();
+        new WorkerTask(this, bitmap, FaceDetectorSingleton.getInstance(getContext())).execute();
     }
 
     protected void setSwappedBitmap(Bitmap bitmap) {
@@ -94,10 +86,10 @@ public class FaceOverlayView extends View {
     }
 
     private void drawFaceBox(Canvas canvas, double scale) {
-        float left = 0;
-        float top = 0;
-        float right = 0;
-        float bottom = 0;
+        float left;
+        float top;
+        float right;
+        float bottom;
 
         for( int i = 0; i < mFaces.size(); i++ ) {
             Face face = mFaces.valueAt(i);
