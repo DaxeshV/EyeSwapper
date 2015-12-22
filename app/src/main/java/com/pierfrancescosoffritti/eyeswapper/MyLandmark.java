@@ -22,6 +22,9 @@ public class MyLandmark {
 
     private int type;
 
+    private float maxOffsetX;
+    private float maxOffsetY;
+
     private float offsetX = 13 *3;
     private float offsetY = 15 *3;
 
@@ -31,6 +34,9 @@ public class MyLandmark {
             offsetX = offset[0] *3;
             offsetY = offset[1] *3;
         }
+
+        maxOffsetX = Math.min(fullImage.getWidth() - landmark.getPosition().x, fullImage.getWidth() - (fullImage.getWidth() - landmark.getPosition().x));
+        maxOffsetY = Math.min(fullImage.getHeight() - landmark.getPosition().y, fullImage.getHeight() - (fullImage.getHeight() - landmark.getPosition().y));
 
         type = landmark.getType();
         position = new PointF();
@@ -66,6 +72,22 @@ public class MyLandmark {
                         && x < fullImage.getWidth() && y < fullImage.getHeight())
                     image.setPixel(((int) (x - getPosition().x)), ((int) (y - getPosition().y)), fullImage.getPixel((int) x, (int) y));
             }
+    }
+
+    public float getMaxOffsetX() {
+        return maxOffsetX;
+    }
+
+    public void setMaxOffsetX(float maxOffsetX) {
+        this.maxOffsetX = maxOffsetX;
+    }
+
+    public float getMaxOffsetY() {
+        return maxOffsetY;
+    }
+
+    public void setMaxOffsetY(float maxOffsetY) {
+        this.maxOffsetY = maxOffsetY;
     }
 
     public PointF getPosition() {

@@ -17,9 +17,12 @@ public class WorkerTask extends AsyncTask {
     private FaceOverlayView mView;
     private Bitmap mBitmap;
 
-    FaceDetector mFaceDetector;
+    private FaceDetector mFaceDetector;
 
     private SparseArray<Face> mFaces;
+
+    private float maxOffsetX = Float.MAX_VALUE;
+    private float maxOffsetY = Float.MAX_VALUE;
 
     public WorkerTask(FaceOverlayView view, Bitmap bitmap, FaceDetector detector) {
         mView = view;
@@ -53,7 +56,7 @@ public class WorkerTask extends AsyncTask {
 
         mView.invalidate();
 
-        EventBus.getInstance().post(new ImageReadyEvent());
+        EventBus.getInstance().post(new ImageReadyEvent(maxOffsetX, maxOffsetY));
     }
 
     private void modifyBitmap() {
@@ -122,6 +125,8 @@ public class WorkerTask extends AsyncTask {
                             mBitmap.setPixel( (int) x, (int) y,  landmarkBitmap1.getPixel(((int) (x - landmark2.getPosition().x)), ((int) (y - landmark2.getPosition().y))));
                     }
 
+                maxOffsetX = Math.min(Math.min(landmark1.getMaxOffsetX(), landmark2.getMaxOffsetX()), maxOffsetX);
+                maxOffsetY  = Math.min(Math.min(landmark1.getMaxOffsetY(), landmark2.getMaxOffsetY()), maxOffsetY);
             }
 
             i++;

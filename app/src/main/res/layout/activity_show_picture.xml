@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+
+    tools:context="com.pierfrancescosoffritti.eyeswapper.MainActivity"
+    android:gravity="center">
+
+    <com.pierfrancescosoffritti.eyeswapper.FaceOverlayView
+        android:id="@+id/face_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_above="@+id/offset_x_tw"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/offset_x_tw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="offset x"
+
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/offset_y_tw"
+        android:padding="10dp"
+        android:gravity="left" />
+
+    <io.techery.progresshint.addition.widget.SeekBar
+        android:id="@+id/seekbar_offset_x"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:popupStyle="follow"
+        android:max="100"
+
+        android:padding="8dp"
+
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/offset_x_tw"
+        android:layout_above="@+id/seekbar_offset_y"
+        />
+
+    <TextView
+        android:id="@+id/offset_y_tw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="offset y"
+
+        android:padding="8dp"
+
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="left" />
+
+    <io.techery.progresshint.addition.widget.SeekBar
+        android:id="@+id/seekbar_offset_y"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:popupStyle="follow"
+        android:max="100"
+
+        android:padding="8dp"
+
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/offset_y_tw"
+        android:layout_alignStart="@id/seekbar_offset_x"
+        android:layout_alignLeft="@id/seekbar_offset_x"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" >
+    </ProgressBar>
+
+</RelativeLayout>

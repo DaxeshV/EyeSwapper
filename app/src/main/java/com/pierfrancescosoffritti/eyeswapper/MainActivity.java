@@ -2,42 +2,23 @@ package com.pierfrancescosoffritti.eyeswapper;
 
 import android.Manifest;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.squareup.otto.Subscribe;
 
-import java.io.File;
-import java.io.IOException;
-
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
-import butterknife.OnTextChanged;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_TAKE_PHOTO = 1;
-    private static final int RESULT_LOAD_IMAGE = 2;
+    protected final static String EXTRA_MESSAGE = "key";
 
-    private String mCurrentPhotoPath;
-
-    @Bind(R.id.progress_bar) View spinner;
-    @Bind(R.id.face_overlay) FaceOverlayView mFaceOverlayView;
+    protected static final int REQUEST_TAKE_PHOTO = 1;
+    protected static final int RESULT_LOAD_IMAGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,149 +42,19 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        EventBus.getInstance().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        EventBus.getInstance().unregister(this);
-    }
-
     @SuppressWarnings("unused")
     @OnClick(R.id.take_pic)
     public void takePic(View view) {
-        dispatchTakePictureIntent();
-
-        spinner.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, ShowPictureActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, REQUEST_TAKE_PHOTO);
+        startActivity(intent);
     }
 
     @SuppressWarnings("unused")
     @OnClick(R.id.load_bitmap)
     public void loadBitmap(View view) {
-
-        spinner.setVisibility(View.VISIBLE);
-
-        Intent i = new Intent(
-                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, RESULT_LOAD_IMAGE);
-    }
-
-    @SuppressWarnings("unused")
-    @OnLongClick(R.id.load_bitmap)
-    public boolean refreshBitmap(View view) {
-
-        spinner.setVisibility(View.VISIBLE);
-
-        loadPic();
-
-        return true;
-    }
-
-    @SuppressWarnings("unused")
-    @OnTextChanged(R.id.offset_x_et)
-    void onOffsetXChanged(CharSequence text) {
-        try {
-            mFaceOverlayView.setOffsetX(Long.parseLong(text.toString()));
-            Log.d("MainActivity", "offsetX: " + text.toString());
-        } catch (NumberFormatException e) {
-            if(!text.toString().isEmpty())
-                Toast.makeText(MainActivity.this, "Please, write only numbers :\\", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @OnTextChanged(R.id.offset_y_et)
-    void onOffsetYChanged(CharSequence text) {
-        try {
-            mFaceOverlayView.setOffsetY(Long.parseLong(text.toString()));
-            Log.d("MainActivity", "offsetY: " + text.toString());
-        } catch (NumberFormatException e) {
-            if(!text.toString().isEmpty())
-                Toast.makeText(MainActivity.this, "Please, write only numbers :\\", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onImageReady(ImageReadyEvent e) {
-        spinner.setVisibility(View.GONE);
-    }
-
-    private File createImageFile() throws IOException {
-        String imageFileName = "capture_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-
-            loadPic();
-        }
-
-        else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            mCurrentPhotoPath = cursor.getString(columnIndex);
-            cursor.close();
-
-            loadPic();
-        }
-
-        else
-            spinner.setVisibility(View.GONE);
-    }
-
-    private void loadPic() {
-        Glide.with(getApplicationContext())
-                .load(mCurrentPhotoPath)
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>(200, 200) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                        mFaceOverlayView.setBitmap(resource);
-                    }
-                });
+        Intent intent = new Intent(this, ShowPictureActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, RESULT_LOAD_IMAGE);
+        startActivity(intent);
     }
 }
