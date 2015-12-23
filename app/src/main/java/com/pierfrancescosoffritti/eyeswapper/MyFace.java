@@ -36,12 +36,14 @@ public class MyFace {
 
         landmarks = new ArrayList<>();
 
+        float eyesRotation = getEyesRotation(landmarkList);
+
+        Log.d("EyesRotation", eyesRotation+"");
+
         for(Landmark landmark : landmarkList) {
             if(landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE)
-                landmarks.add(new MyLandmark(fullImage, face, landmark, offset));
+                landmarks.add(new MyLandmark(fullImage, face, landmark, eyesRotation, offset));
         }
-
-        Log.d("face ", "landmarks: " +landmarks.size());
 
         // detect with landmarks
 //        for (Landmark landmark : landmarkList)
@@ -71,6 +73,30 @@ public class MyFace {
 //                if (((int) (x - getPosition().x)) < image.getWidth() && ((int) (y - getPosition().y)) < image.getHeight())
 //                    image.setPixel(((int) (x - getPosition().x)), ((int) (y - getPosition().y)), fullImage.getPixel((int) x, (int) y));
 //            }
+    }
+
+    private float getEyesRotation(List<Landmark> landmarkList) {
+        Landmark leftEye = null;
+        Landmark rightEye = null;
+
+        for(Landmark landmark : landmarkList) {
+            if(landmark.getType() == Landmark.LEFT_EYE)
+                leftEye = landmark;
+            if(landmark.getType() == Landmark.RIGHT_EYE)
+                rightEye = landmark;
+        }
+
+        if(leftEye == null || rightEye == null)
+            return 0;
+
+        // negative if right higher than left
+        int faceOrientation = (int) Math.signum(rightEye.getPosition().y - leftEye.getPosition().y);
+        Log.d("faceOrientation", faceOrientation+"");
+
+        float c2 = leftEye.getPosition().x - rightEye.getPosition().x;
+        float i = (float) Math.sqrt(Math.pow(leftEye.getPosition().x - rightEye.getPosition().x, 2) + Math.pow(leftEye.getPosition().y - rightEye.getPosition().y, 2));
+
+        return (float) Math.acos(c2/i) * faceOrientation;
     }
 
     public PointF getPosition() {

@@ -133,15 +133,25 @@ public class WorkerTask extends AsyncTask {
                 // 1st face
                 for(float y = landmark1.getPosition().y; y < landmark1.getPosition().y + landmark1.getHeight() && y < mBitmap.getHeight(); y++)
                     for(float x = landmark1.getPosition().x; x < landmark1.getPosition().x + landmark1.getWidth() && x < mBitmap.getWidth(); x++) {
-                        if(((int) (x - landmark1.getPosition().x)) < landmarkBitmap2.getWidth() && ((int) (y - landmark1.getPosition().y)) < landmarkBitmap2.getHeight())
-                            mBitmap.setPixel( (int) x, (int) y,  landmarkBitmap2.getPixel(((int) (x - landmark1.getPosition().x)), ((int) (y - landmark1.getPosition().y))));
+                        if(((int) (x - landmark1.getPosition().x)) < landmarkBitmap2.getWidth() && ((int) (y - landmark1.getPosition().y)) < landmarkBitmap2.getHeight()) {
+                            int pixel = landmarkBitmap2.getPixel(((int) (x - landmark1.getPosition().x)), ((int) (y - landmark1.getPosition().y)));
+                            int alpha = (pixel >> 24) & 0xFF;
+                            if(alpha > 0)
+                                mBitmap.setPixel((int) x, (int) y, pixel);
+//                            mBitmap.setPixel((int) x, (int) y, landmarkBitmap2.getPixel(((int) (x - landmark1.getPosition().x)), ((int) (y - landmark1.getPosition().y))));
+                        }
                     }
 
                 // 2nd face
                 for(float y = landmark2.getPosition().y; y < landmark2.getPosition().y + landmark2.getHeight() && y < mBitmap.getHeight(); y++)
                     for(float x = landmark2.getPosition().x; x < landmark2.getPosition().x + landmark2.getWidth() && x < mBitmap.getWidth(); x++) {
-                        if(((int) (x - landmark2.getPosition().x)) < landmarkBitmap1.getWidth() && ((int) (y - landmark2.getPosition().y)) < landmarkBitmap1.getHeight())
-                            mBitmap.setPixel( (int) x, (int) y,  landmarkBitmap1.getPixel(((int) (x - landmark2.getPosition().x)), ((int) (y - landmark2.getPosition().y))));
+                        if(((int) (x - landmark2.getPosition().x)) < landmarkBitmap1.getWidth() && ((int) (y - landmark2.getPosition().y)) < landmarkBitmap1.getHeight()) {
+                            int pixel = landmarkBitmap1.getPixel(((int) (x - landmark2.getPosition().x)), ((int) (y - landmark2.getPosition().y)));
+                            int alpha = (pixel >> 24) & 0xFF;
+                            if(alpha > 0)
+                                mBitmap.setPixel((int) x, (int) y, pixel);
+//                            mBitmap.setPixel((int) x, (int) y, landmarkBitmap1.getPixel(((int) (x - landmark2.getPosition().x)), ((int) (y - landmark2.getPosition().y))));
+                        }
                     }
 
                 maxOffsetX = Math.min(Math.min(landmark1.getMaxOffsetX(), landmark2.getMaxOffsetX()), maxOffsetX);
