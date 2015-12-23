@@ -3,9 +3,12 @@ package com.pierfrancescosoffritti.eyeswapper.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +20,7 @@ import com.pierfrancescosoffritti.eyeswapper.EventBus;
 import com.pierfrancescosoffritti.eyeswapper.FaceOverlayView;
 import com.pierfrancescosoffritti.eyeswapper.ImageReadyEvent;
 import com.pierfrancescosoffritti.eyeswapper.R;
+import com.pierfrancescosoffritti.eyeswapper.utils.SnackBarProvider;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
@@ -101,8 +105,26 @@ public class ShowPictureActivity extends AppCompatActivity {
         mSeekBarOffset_X.setMax(e.getMaxOffsetX());
         mSeekBarOffset_Y.setMax(e.getMaxOffsetY());
 
-        mSeekBarOffset_X.setEnabled(true);
-        mSeekBarOffset_Y.setEnabled(true);
+        boolean enableSeekBar = true;
+        if(e.getFacesNumber() <= 1 || (e.getMaxOffsetX() <= 0 && e.getMaxOffsetY() <= 0 ))
+            enableSeekBar = false;
+
+        mSeekBarOffset_X.setEnabled(enableSeekBar);
+        mSeekBarOffset_Y.setEnabled(enableSeekBar);
+
+        if(e.getFacesNumber() <= 1) {
+            String text = "";
+            if (e.getFacesNumber() == 0)
+                text = "i've found ZERO faces ¯\\_(ツ)_/¯";
+            else if (e.getFacesNumber() == 1)
+                text = "i've found only ONE face ¯\\_(ツ)_/¯";
+
+            SnackBarProvider.snackBarRequest(
+                    findViewById(R.id.show_picture_root_layout),
+                    text,
+                    ContextCompat.getColor(this, R.color.colorAccent),
+                    Snackbar.LENGTH_LONG);
+        }
     }
 
     private boolean refreshBitmap() {
