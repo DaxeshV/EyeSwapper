@@ -1,7 +1,9 @@
 package com.pierfrancescosoffritti.eyeswapper;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Frame;
@@ -33,6 +35,8 @@ public class WorkerTask extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
 
+//        mBitmap = mBitmap.copy(Bitmap.Config.ARGB_8888, true);
+//        mBitmap.setHasAlpha(true);
         mBitmap = mBitmap.copy(mBitmap.getConfig(), true);
 
         if (!mFaceDetector.isOperational()) {
@@ -42,7 +46,7 @@ public class WorkerTask extends AsyncTask {
             mFaces = mFaceDetector.detect(frame);
 //            mFaceDetector.release();
 
-            if(mFaces.size() > 1);
+            if(mFaces.size() > 0);
                 modifyBitmap();
         }
 
@@ -62,10 +66,10 @@ public class WorkerTask extends AsyncTask {
     private void modifyBitmap() {
         MyFace[] faces = getFaces();
 
-        // debug
-        //paintRed(faces);
-
-        drawFaces(faces);
+        if(faces.length > 1)
+            swapEyes(faces);
+        else if(faces.length == 1)
+            paintRed(faces);
     }
 
     private MyFace[] getFaces() {
@@ -87,7 +91,27 @@ public class WorkerTask extends AsyncTask {
         return faces;
     }
 
-    private void drawFaces(MyFace[] faces) {
+    private void paintRed(MyFace[] faces) {
+        MyFace face = faces[0];
+
+        if(face == null) {
+            Log.e("WorkerTask", "face == null");
+            return;
+        }
+
+        Bitmap foreverAlone = Assets.getForeverAlone((int) face.getWidth(), (int) face.getHeight());
+
+        for(float y = face.getPosition().y; y < face.getPosition().y + foreverAlone.getHeight(); y++)
+            for(float x = face.getPosition().x; x < face.getPosition().x + foreverAlone.getWidth(); x++) {
+//                    mBitmap.setPixel( (int) x, (int) y, Color.TRANSPARENT);
+                int pixel = foreverAlone.getPixel(((int) (x - face.getPosition().x)), ((int) (y - face.getPosition().y)));
+                int alpha = (pixel >> 24) & 0xFF;
+                if(alpha > 0)
+                    mBitmap.setPixel((int) x, (int) y, pixel);
+            }
+    }
+
+    private void swapEyes(MyFace[] faces) {
 
         if(faces == null || faces.length <= 0 || faces[0] == null)
             return;

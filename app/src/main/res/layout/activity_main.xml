@@ -9,7 +9,7 @@
 
     android:background="@color/colorPrimary"
 
-    tools:context="com.pierfrancescosoffritti.eyeswapper.MainActivity" >
+    tools:context=".activities.MainActivity" >
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menu"

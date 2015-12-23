@@ -44,14 +44,15 @@ public class MyLandmark {
         offsetX = (offsetX * face.getWidth()) / fullImage.getWidth();
         offsetY = (offsetY * face.getHeight()) / fullImage.getHeight();
 
+        maxOffsetX = (maxOffsetX * face.getWidth()) / fullImage.getWidth();
+        maxOffsetY = (maxOffsetY * face.getHeight()) / fullImage.getHeight();
+
         if(landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE) {
             position.x = landmark.getPosition().x - (offsetX);
             position.y = landmark.getPosition().y - (offsetY);
 
-            if(position.x < 0)
-                position.x = 0;
-            if(position.y < 0)
-                position.y = 0;
+            position.x = position.x < 0 ? 0 : position.x;
+            position.y = position.y < 0 ? 0 : position.y;
 
             width = offsetX * 2;
             height = offsetY * 2;
@@ -59,10 +60,6 @@ public class MyLandmark {
 
         if(width <= 0 || height <= 0)
             throw new IllegalStateException("width <= 0 || height <= 0");
-
-//        Log.d("landmark ", "type: " +type);
-//        Log.d("landmark ", "position: " + "(" + position.x + ", " + position.y + ")");
-//        Log.d("landmark ", "width: " +width +" height: " +height);
 
         this.image = Bitmap.createBitmap((int) width, (int) height, fullImage.getConfig());
 

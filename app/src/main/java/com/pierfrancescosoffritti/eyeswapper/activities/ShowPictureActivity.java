@@ -1,4 +1,4 @@
-package com.pierfrancescosoffritti.eyeswapper;
+package com.pierfrancescosoffritti.eyeswapper.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +13,10 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.pierfrancescosoffritti.eyeswapper.EventBus;
+import com.pierfrancescosoffritti.eyeswapper.FaceOverlayView;
+import com.pierfrancescosoffritti.eyeswapper.ImageReadyEvent;
+import com.pierfrancescosoffritti.eyeswapper.R;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
@@ -27,7 +31,8 @@ public class ShowPictureActivity extends AppCompatActivity {
     private String mCurrentPhotoPath;
 
     @Bind(R.id.progress_bar) View spinner;
-    @Bind(R.id.face_overlay) FaceOverlayView mFaceOverlayView;
+    @Bind(R.id.face_overlay)
+    FaceOverlayView mFaceOverlayView;
 
     @Bind(R.id.seekbar_offset_x) SeekBar mSeekBarOffset_X;
     @Bind(R.id.seekbar_offset_y) SeekBar mSeekBarOffset_Y;
@@ -61,7 +66,7 @@ public class ShowPictureActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(android.widget.SeekBar seekBar) {
                 int id = seekBar.getId();
-                int progress = seekBar.getProgress();
+                int progress = seekBar.getProgress() <= 0 ? 1 : seekBar.getProgress();
 
                 if(id == mSeekBarOffset_X.getId())
                     onOffsetXChanged(progress);
@@ -148,7 +153,7 @@ public class ShowPictureActivity extends AppCompatActivity {
     }
 
     private void loadPic() {
-        Glide.with(getApplicationContext())
+        Glide.with(this)
                 .load(mCurrentPhotoPath)
                 .asBitmap()
                 .into(new SimpleTarget<Bitmap>(200, 200) {

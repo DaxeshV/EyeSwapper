@@ -1,4 +1,4 @@
-package com.pierfrancescosoffritti.eyeswapper;
+package com.pierfrancescosoffritti.eyeswapper.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 import com.github.clans.fab.FloatingActionMenu;
+import com.pierfrancescosoffritti.eyeswapper.Assets;
+import com.pierfrancescosoffritti.eyeswapper.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        getSupportActionBar().setElevation(0);
+        Assets.getInstance().init(this);
 
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(this,
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {

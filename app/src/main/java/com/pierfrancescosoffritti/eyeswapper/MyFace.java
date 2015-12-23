@@ -27,6 +27,13 @@ public class MyFace {
 
     public MyFace(Bitmap fullImage, Face face, List<Landmark> landmarkList, float ... offset) {
 
+        position = face.getPosition();
+        position.x = position.x < 0 ? 0 : position.x;
+        position.y = position.y < 0 ? 0 : position.y;
+
+        width = face.getWidth();
+        height = face.getHeight();
+
         landmarks = new ArrayList<>();
 
         for(Landmark landmark : landmarkList) {

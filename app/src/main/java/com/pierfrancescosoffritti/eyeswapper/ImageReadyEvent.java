@@ -17,15 +17,7 @@ public class ImageReadyEvent {
         return maxOffsetY;
     }
 
-    public void setMaxOffsetY(int maxOffsetY) {
-        this.maxOffsetY = maxOffsetY;
-    }
-
     public int getMaxOffsetX() {
         return maxOffsetX;
-    }
-
-    public void setMaxOffsetX(int maxOffsetX) {
-        this.maxOffsetX = maxOffsetX;
     }
 }
