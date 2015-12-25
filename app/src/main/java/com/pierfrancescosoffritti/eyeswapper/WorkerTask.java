@@ -127,8 +127,8 @@ public class WorkerTask extends AsyncTask {
                 if(landmark2 == null)
                     continue;
 
-                Bitmap landmarkBitmap1 = Bitmap.createScaledBitmap(landmark1.getImage(), (int) landmark2.getWidth(), (int) landmark2.getHeight(), false);
-                Bitmap landmarkBitmap2 = Bitmap.createScaledBitmap(landmark2.getImage(), (int) landmark1.getWidth(), (int) landmark1.getHeight(), false);
+                Bitmap landmarkBitmap1 = Bitmap.createScaledBitmap(landmark1.getRotatedImage(landmark2.getRotation()*-1), (int) landmark2.getWidth(), (int) landmark2.getHeight(), false);
+                Bitmap landmarkBitmap2 = Bitmap.createScaledBitmap(landmark2.getRotatedImage(landmark1.getRotation()*-1), (int) landmark1.getWidth(), (int) landmark1.getHeight(), false);
 
                 // 1st face
                 for(float y = landmark1.getPosition().y; y < landmark1.getPosition().y + landmark1.getHeight() && y < mBitmap.getHeight(); y++)

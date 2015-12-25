@@ -74,6 +74,10 @@ public class MyLandmark {
             }
 
         // apply rotation, to have a final rotation of 0
+        image = applyRotation(eyeRotation);
+    }
+
+    private Bitmap applyRotation(float eyeRotation) {
         Matrix matrix = new Matrix();
         matrix.postRotate((float) Math.toDegrees(eyeRotation));
 
@@ -86,19 +90,29 @@ public class MyLandmark {
         width = newWidth;
         height = newHeight;
 
-        image = Bitmap.createScaledBitmap(image, (int) width, (int) height, true);
-        image = Bitmap.createBitmap(image , 0, 0, (int) width, (int) height, matrix, true);
+        Bitmap newBimap = Bitmap.createScaledBitmap(image, (int) width, (int) height, true);
+        newBimap = Bitmap.createBitmap(newBimap , 0, 0, (int) width, (int) height, matrix, true);
 
-        for (int y = 0; y < image.getHeight(); y++)
-            for (int x = 0; x < image.getWidth(); x++) {
-                int pixel = image.getPixel(x, y);
+        for (int y = 0; y < newBimap.getHeight(); y++)
+            for (int x = 0; x < newBimap.getWidth(); x++) {
+                int pixel = newBimap.getPixel(x, y);
                 int r = (pixel)&0xFF;
                 int g = (pixel>>8)&0xFF;
                 int b = (pixel>>16)&0xFF;
                 int a = (pixel>>24)&0xFF;
                 if(r == 0 && g == 0 && b == 0)
-                    image.setPixel(x, y, Color.TRANSPARENT);
+                    newBimap.setPixel(x, y, Color.TRANSPARENT);
             }
+
+        return newBimap;
+    }
+
+    public Bitmap getRotatedImage(float rotation) {
+        return applyRotation(rotation);
+    }
+
+    public float getRotation() {
+        return eyeRotation;
     }
 
     public float getMaxOffsetX() {
