@@ -11,6 +11,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -34,9 +37,10 @@ public class ShowPictureActivity extends AppCompatActivity {
 
     private String mCurrentPhotoPath;
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
+
     @Bind(R.id.progress_bar) View spinner;
-    @Bind(R.id.face_overlay)
-    FaceOverlayView mFaceOverlayView;
+    @Bind(R.id.face_overlay) FaceOverlayView mFaceOverlayView;
 
     @Bind(R.id.seekbar_offset_x) SeekBar mSeekBarOffset_X;
     @Bind(R.id.seekbar_offset_y) SeekBar mSeekBarOffset_Y;
@@ -46,6 +50,8 @@ public class ShowPictureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_picture);
         ButterKnife.bind(this);
+
+        initToolbar(toolbar);
 
         switch((int) getIntent().getExtras().get(MainActivity.EXTRA_MESSAGE)) {
             case MainActivity.RESULT_LOAD_IMAGE: {
@@ -81,6 +87,39 @@ public class ShowPictureActivity extends AppCompatActivity {
 
         mSeekBarOffset_X.setOnSeekBarChangeListener(mSeekBarChangeListener);
         mSeekBarOffset_Y.setOnSeekBarChangeListener(mSeekBarChangeListener);
+    }
+
+    private void initToolbar(Toolbar toolbar) {
+        this.setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.show_picture_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.menu.show_picture_menu: {
+
+                return true;
+            }
+            case android.R.id.home: {
+                this.finish();
+                break;
+            }
+
+            default:
+                super.onOptionsItemSelected(item);
+        }
+
+        return false;
     }
 
     @Override

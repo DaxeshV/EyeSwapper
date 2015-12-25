@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EyeSwapper</string>
+    <string name="save_picture">Save picture</string>
 </resources>
