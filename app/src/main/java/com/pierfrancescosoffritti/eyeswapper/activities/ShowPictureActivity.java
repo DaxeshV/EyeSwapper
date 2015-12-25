@@ -1,22 +1,17 @@
 package com.pierfrancescosoffritti.eyeswapper.activities;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -177,8 +172,19 @@ public class ShowPictureActivity extends AppCompatActivity {
             // show the pic in gallery
             MediaScannerConnection.scanFile(this, new String[]{file.getPath()}, new String[]{"image/jpeg"}, null);
 
+            SnackBarProvider.snackBarRequest(
+                    findViewById(R.id.show_picture_root_layout),
+                    "Picture saved (~˘▾˘)~",
+                    ContextCompat.getColor(this, R.color.colorAccent),
+                    Snackbar.LENGTH_SHORT);
+
         } catch (Exception e) {
             e.printStackTrace();
+            SnackBarProvider.snackBarRequest(
+                    findViewById(R.id.show_picture_root_layout),
+                    "Can't save the picture (╥_╥)",
+                    ContextCompat.getColor(this, R.color.colorError),
+                    Snackbar.LENGTH_LONG);
         }
     }
 
