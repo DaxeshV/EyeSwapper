@@ -58,6 +58,10 @@ public class FaceOverlayView extends View {
         new WorkerTask(this, bitmap, FaceDetectorSingleton.getInstance(getContext())).execute();
     }
 
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
+
     protected void setSwappedBitmap(Bitmap bitmap) {
         mBitmap = bitmap;
     }

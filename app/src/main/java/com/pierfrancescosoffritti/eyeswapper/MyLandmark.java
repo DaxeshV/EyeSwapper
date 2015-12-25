@@ -47,9 +47,6 @@ public class MyLandmark {
         offsetX = (offsetX * face.getWidth()) / fullImage.getWidth();
         offsetY = (offsetY * face.getHeight()) / fullImage.getHeight();
 
-//        maxOffsetX = (maxOffsetX * face.getWidth()) / fullImage.getWidth();
-//        maxOffsetY = (maxOffsetY * face.getHeight()) / fullImage.getHeight();
-
         if(landmark.getType() == Landmark.LEFT_EYE || landmark.getType() == Landmark.RIGHT_EYE) {
             position.x = landmark.getPosition().x - (offsetX);
             position.y = landmark.getPosition().y - (offsetY);

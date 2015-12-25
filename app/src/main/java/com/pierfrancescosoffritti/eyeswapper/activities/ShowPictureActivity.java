@@ -1,10 +1,14 @@
 package com.pierfrancescosoffritti.eyeswapper.activities;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
@@ -12,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +32,10 @@ import com.pierfrancescosoffritti.eyeswapper.utils.SnackBarProvider;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -106,8 +114,8 @@ public class ShowPictureActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.menu.show_picture_menu: {
-
+            case R.id.save_picture: {
+                saveImage(mFaceOverlayView.getBitmap(), "EyesSwapper", "swapped_" +mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/")+1, mCurrentPhotoPath.length()));
                 return true;
             }
             case android.R.id.home: {
@@ -134,6 +142,44 @@ public class ShowPictureActivity extends AppCompatActivity {
         super.onPause();
 
         EventBus.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if((int) getIntent().getExtras().get(MainActivity.EXTRA_MESSAGE) == MainActivity.REQUEST_TAKE_PHOTO)
+            deleteImage(mCurrentPhotoPath);
+    }
+
+    private boolean deleteImage(String path) {
+        try {
+            return new File(new URI(mCurrentPhotoPath)).delete();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void saveImage(Bitmap bitmap, String path, String fileName) {
+
+        String root = Environment.getExternalStorageDirectory().toString();
+        File dir = new File(root +"/"+path);
+        dir.mkdirs();
+        File file = new File (dir, fileName);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+
+            // show the pic in gallery
+            MediaScannerConnection.scanFile(this, new String[]{file.getPath()}, new String[]{"image/jpeg"}, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressWarnings("unused")
